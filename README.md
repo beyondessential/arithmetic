@@ -8,19 +8,13 @@ With `yarn`:
 
 ```
 yarn add @beyondessential/arithmetic
-
 ```
 
 With `npm`:
 
 ```
 npm add @beyondessential/arithmetic
-
 ```
-
-### Usage
-
-yarn add @beyondessential/arithmetic
 
 ## API
 
@@ -30,7 +24,7 @@ yarn add @beyondessential/arithmetic
 
 Usage example:
 
-```javascript
+```js
 import { runArithmetic } from '@beyondessential/arithmetic';
 
 const value = runArithmetic('(-1 + 2.5) / 3');
@@ -46,7 +40,7 @@ console.log(valueWithVariable); // 8
 
 Usage example:
 
-```javascript
+```js
 import { getOperand } from '@beyondessential/arithmetic';
 
 const operands = getOperand('(-a * b) / 3');
