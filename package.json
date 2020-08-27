@@ -1,15 +1,25 @@
 {
   "name": "@beyondessential/arithmetic",
-  "private": true,
   "version": "1.0.0",
   "description": "Utility to evaluate BODMAS arithmetic formulas",
+  "keywords": [
+    "arithmetic",
+    "calculations",
+    "shunting yard",
+    "bodmas"
+  ],
+  "homepage": "https://github.com/beyondessential/arithmetic.git#readme",
+  "bugs": {
+    "url": "https://github.com/beyondessential/arithmetic/issues"
+  },
+  "repository": "git@github.com:beyondessential/arithmetic.git",
+  "license": "MIT",
+  "author": "Beyond Essential Systems <admin@tupaia.org> (https://beyondessential.com.au)",
   "main": "dist/index.js",
   "files": [
     "src",
     "index.d.ts"
   ],
-  "homepage": "https://github.com/beyondessential/arithmetic.git#readme",
-  "repository": "git@github.com:beyondessential/arithmetic.git",
   "scripts": {
     "build": "babel src --out-dir dist --ignore 'src/__tests__/**'",
     "postinstall": "yarn build",
@@ -17,18 +27,12 @@
     "test:coverage": "yarn test --coverage",
     "test:watch": "yarn test --watch"
   },
-  "keywords": [],
-  "author": "Beyond Essential Systems Pty. Ltd.",
-  "license": "AGPL-3.0-only",
-  "devDependencies": {
-    "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.11.1",
-    "@babel/preset-env": "^7.11.0",
-    "@beyondessential/eslint-config-beyondessential": "^2.5.0",
-    "babel-jest": "^26.3.0",
-    "eslint": "^7.7.0",
-    "jest": "^26.4.0",
-    "prettier": "^2.0.5"
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env"
+      ]
+    ]
   },
   "eslintConfig": {
     "extends": "@beyondessential/eslint-config-beyondessential",
@@ -41,11 +45,14 @@
       }
     ]
   },
-  "babel": {
-    "presets": [
-      [
-        "@babel/preset-env"
-      ]
-    ]
+  "devDependencies": {
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.11.1",
+    "@babel/preset-env": "^7.11.0",
+    "@beyondessential/eslint-config-beyondessential": "^2.5.0",
+    "babel-jest": "^26.3.0",
+    "eslint": "^7.7.0",
+    "jest": "^26.4.0",
+    "prettier": "^2.0.5"
   }
 }
