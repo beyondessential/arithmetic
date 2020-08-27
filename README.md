@@ -2,23 +2,35 @@
 
 Utility to evaluate [BODMAS](https://en.wikipedia.org/wiki/Order_of_operations) arithmetic formulas. It is an implementation of the [shunting yard algorithm](https://en.wikipedia.org/wiki/Shunting-yard_algorithm).
 
-### Installation
+## Installation
+
+With `yarn`:
 
 ```
-# Install a specific version (recommended)
-yarn add beyondessential/arithmetic#v1.1.0
-
-# Install the current latest version
-# Will get updated to the latest version automatically every time `yarn install` is run
-yarn add beyondessential/arithmetic
+yarn add @beyondessential/arithmetic
 
 ```
 
-`npm` can also be used in place of `yarn` in the commands above.
+With `npm`:
+
+```
+npm add @beyondessential/arithmetic
+
+```
 
 ### Usage
 
-```js
+yarn add @beyondessential/arithmetic
+
+## API
+
+`formulaText` must be in [BODMAS](https://en.wikipedia.org/wiki/Order_of_operations) format.
+
+### `runArithmetic(formulaText: string, values?: Record<string, string | number>): number`
+
+Usage example:
+
+```javascript
 import { runArithmetic } from '@beyondessential/arithmetic';
 
 const value = runArithmetic('(-1 + 2.5) / 3');
@@ -28,4 +40,15 @@ const valueWithVariable = runArithmetic('2 * four', {
   four: 4,
 });
 console.log(valueWithVariable); // 8
+```
+
+### `getOperand(formulaText: string): string[]`
+
+Usage example:
+
+```javascript
+import { getOperand } from '@beyondessential/arithmetic';
+
+const operands = getOperand('(-a * b) / 3');
+console.log(value); // ['a', 'b', '3']
 ```
