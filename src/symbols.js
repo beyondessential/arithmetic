@@ -5,17 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-const FORMULA_OPERATORS = ['+', '-', '/', '*', 'x'];
-
-/**
- * Operators used as part of the algorithm, but not supported in the formula input
- */
-const INTERNAL_OPERATORS = ['u'];
-
-const OPERATORS = FORMULA_OPERATORS.concat(INTERNAL_OPERATORS);
-
 export function isOperator(token) {
-  return OPERATORS.includes(token);
+  return ['+', '-', '/', '*', 'x', 'u'].includes(token);
 }
 
 export function getPrecedence(operator) {
@@ -35,10 +26,11 @@ export function getPrecedence(operator) {
 }
 
 export function getOperands(formulaText) {
-  const nonOperandSymbols = FORMULA_OPERATORS.map(s => `\\${s}`)
-    .concat(['(', ')', ' '])
-    .join('');
-  const codes = formulaText.split(new RegExp(`[${nonOperandSymbols}]`, 'g')).filter(c => c !== '');
+  const codes = formulaText
+    // Replace the alternate multiplication symbol 'x' with a non-alphanumeric character
+    .replace(/(^|\W)x(\W|$)/, ' ')
+    .split(/[+-/*() ]/g)
+    .filter(c => c !== '');
 
   return [...new Set(codes)];
 }
