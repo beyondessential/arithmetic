@@ -44,5 +44,5 @@ Usage example:
 import { getOperands } from '@beyondessential/arithmetic';
 
 const operands = getOperands('(-a * b) / 3');
-console.log(value); // ['a', 'b', '3']
+console.log(operands); // ['a', 'b', '3']
 ```
