@@ -26,11 +26,11 @@ export function getPrecedence(operator) {
 }
 
 export function getOperands(formulaText) {
-  const codes = formulaText
+  const operands = formulaText
     // Replace the alternate multiplication symbol 'x' with a non-alphanumeric character
     .replace(/(^|\W)x(\W|$)/, ' ')
     .split(/[+-/*() ]/g)
     .filter(c => c !== '');
 
-  return [...new Set(codes)];
+  return [...new Set(operands)];
 }
