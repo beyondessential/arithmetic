@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2020 Beyond Essential Systems Pty Ltd
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 // This module is responsible for taking a string, interpreting it as an
 // arithmetic expression, substituting in some provided values,
 // and then calculating the result of that expression.
@@ -15,35 +22,7 @@
 // that, don't sweat! There're unit tests and you can validate that things
 // work over there.
 
-function isOperator(token) {
-  switch (token) {
-    case '+':
-    case '-':
-    case '/':
-    case '*':
-    case 'x':
-    case 'u':
-      return true;
-    default:
-      return false;
-  }
-}
-
-function getPrecedence(operator) {
-  switch (operator) {
-    case 'u':
-      return 4;
-    case '*':
-    case 'x':
-    case '/':
-      return 3;
-    case '+':
-    case '-':
-      return 2;
-    default:
-      throw new Error('Invalid operator');
-  }
-}
+import { isOperator, getPrecedence } from './symbols';
 
 const unaryRegex = /(^|[*x/+\-u])-/g;
 function replaceUnaryMinus(text) {
