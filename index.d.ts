@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-export function getOperands(formulaText: string): string[];
+export function getVariables(formulaText: string): string[];
 export function runArithmetic(
   formulaText: string,
   values?: Record<string, string | number>,

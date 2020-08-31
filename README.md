@@ -36,13 +36,13 @@ const valueWithVariable = runArithmetic('2 * four', {
 console.log(valueWithVariable); // 8
 ```
 
-### `getOperands(formulaText: string): string[]`
+### `getVariables(formulaText: string): string[]`
 
 Usage example:
 
 ```js
-import { getOperands } from '@beyondessential/arithmetic';
+import { getVariables } from '@beyondessential/arithmetic';
 
-const operands = getOperands('(-a * b) / 3');
-console.log(operands); // ['a', 'b', '3']
+const variables = getVariables('(-a * b - 1) / (c + 3)');
+console.log(variables); // ['a', 'b', 'c']
 ```

@@ -25,12 +25,12 @@ export function getPrecedence(operator) {
   }
 }
 
-export function getOperands(formulaText) {
-  const operands = formulaText
+export function getVariables(formulaText) {
+  const variables = formulaText
     // Replace the alternate multiplication symbol 'x' with a non-alphanumeric character
     .replace(/(^|\W)x(\W|$)/, ' ')
     .split(/[+-/*() ]/g)
-    .filter(c => c !== '');
+    .filter(v => v !== '' && Number.isNaN(Number(v)));
 
-  return [...new Set(operands)];
+  return [...new Set(variables)];
 }

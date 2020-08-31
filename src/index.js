@@ -6,4 +6,4 @@
  */
 
 export { runArithmetic } from './arithmetic';
-export { getOperands } from './symbols';
+export { getVariables } from './symbols';
