@@ -97,6 +97,11 @@ describe('Arithmetic', () => {
   });
 
   describe('max function', () => {
+    it('should handle max with no arguments', () => {
+      const result = runArithmetic('max()');
+      expect(result).toEqual(-Infinity);
+    });
+
     it('should handle max of one number', () => {
       const result = runArithmetic('max(15)');
       expect(result).toEqual(15);
