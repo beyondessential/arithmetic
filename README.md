@@ -48,7 +48,8 @@ console.log(variables); // ['a', 'b', 'c']
 ```
 
 ## formulaText operators
-Name | Example | Name
+Note: All operators are case **in**sensitive.
+Operator | Example | Description
 -|-|-
  `+` | `1 + 1` | Addition
  `-` | `1 - 1` | Subtraction
