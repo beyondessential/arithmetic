@@ -96,7 +96,7 @@ describe('Arithmetic', () => {
     });
   });
 
-  describe.only('max function', () => {
+  describe('max function', () => {
     it('should handle max of one number', () => {
       const result = runArithmetic('max(15)');
       expect(result).toEqual(15);

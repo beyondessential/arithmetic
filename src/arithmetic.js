@@ -24,7 +24,7 @@
 
 import { isOperator, getPrecedence } from './symbols';
 
-const unaryRegex = /(^|[*()x/+\-u,])-/g;
+const unaryRegex = /(^|[*(x/+\-u,])-/g;
 function replaceUnaryMinus(text) {
   const replaced = text.replace(unaryRegex, (match, p1) => `${p1}u`);
   if (replaced !== text) {
@@ -124,6 +124,8 @@ function processQueue(queue) {
 
     // alias just in case
     x: () => operations['*'](),
+
+    // functions
     max: () => {
       let val = stack.pop();
       let max = -Infinity;
@@ -150,6 +152,8 @@ function processQueue(queue) {
     }
     throw new Error('Unexpected token', item);
   }
+  console.log(stack[0]);
+  if (stack.length > 1 || typeof stack[0] !== 'number') throw new Error('Unmatched parenthesis');
 
   return stack[0];
 }
