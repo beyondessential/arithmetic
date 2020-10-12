@@ -22,7 +22,7 @@
 // that, don't sweat! There're unit tests and you can validate that things
 // work over there.
 
-import { isOperator, getPrecedence } from './symbols';
+import { isOperator, getPrecedence, FUNCTION_NAMES } from './symbols';
 
 const unaryRegex = /(^|[*(x/+\-u,])-/g;
 function replaceUnaryMinus(text) {
@@ -47,29 +47,29 @@ function shouldPopOperator(token, topOfStack) {
   return true;
 }
 
-const tokenizer = /(\+|-|\*|\/|\(|\)|u|max|x|,)/g;
+const tokenizer = new RegExp(`(${FUNCTION_NAMES.join('|')}|\\+|-|\\*|\\/|\\(|\\)|u|x|,)`, 'g');
 
 function shuntingYard(text) {
   const stack = [];
   const queue = [];
 
   const tokens = text.split(tokenizer);
+  console.log(tokens);
 
   while (tokens.length > 0) {
     const token = tokens.shift();
     if (!token) continue;
+    console.log(token, stack, queue);
 
     if (isOperator(token)) {
       while (shouldPopOperator(token, stack[0])) {
         queue.push(stack.shift());
       }
       stack.unshift(token);
+      if (FUNCTION_NAMES.includes(token)) queue.push('END_ARGS');
       continue;
     }
     if (token === '(') {
-      if (stack[0] && stack[0] === 'max') {
-        queue.push(token);
-      }
       stack.unshift(token);
       continue;
     }
@@ -85,7 +85,7 @@ function shuntingYard(text) {
       }
       if (stack[0] === '(') {
         stack.shift();
-        if (stack[0] === 'max') {
+        if (FUNCTION_NAMES.includes(stack[0])) {
           queue.push(stack.shift());
         }
       } else {
@@ -126,9 +126,9 @@ function processQueue(queue) {
     max: () => {
       let val = stack.pop();
       let max = -Infinity;
-      while (val !== '(') {
+      while (val !== 'END_ARGS') {
         max = Math.max(max, val);
-        if (stack.length === 0) throw new Error('oop');
+        if (stack.length === 0) throw new Error('No END_ARGS for function');
         val = stack.pop();
       }
       return max;
@@ -137,7 +137,7 @@ function processQueue(queue) {
 
   while (queue.length > 0) {
     const item = queue.shift();
-    if (typeof item === 'number' || item === '(') {
+    if (typeof item === 'number' || item === 'END_ARGS') {
       stack.push(item);
       continue;
     }
@@ -147,7 +147,6 @@ function processQueue(queue) {
     }
     throw new Error('Unexpected token', item);
   }
-  if (stack.length > 1 || typeof stack[0] !== 'number') throw new Error('Unmatched parenthesis');
 
   return stack[0];
 }

@@ -5,14 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+export const FUNCTION_NAMES = ['max'];
+
 export function isOperator(token) {
-  return ['+', '-', '/', '*', 'x', 'u', 'max'].includes(token);
+  return ['+', '-', '/', '*', 'x', 'u'].includes(token) || FUNCTION_NAMES.includes(token);
 }
 
 export function getPrecedence(operator) {
+  if (FUNCTION_NAMES.includes(operator)) return 5;
+
   switch (operator) {
-    case 'max':
-      return 5;
     case 'u':
       return 4;
     case '*':
@@ -33,6 +35,7 @@ export function getVariables(formulaText) {
   const variables = formulaText
     // Replace the alternate multiplication symbol 'x' with a non-alphanumeric character
     .replace(/(^|\W)x(\W|$)/, ' ')
+    // Replace functions
     .replace(/max\s*\(/, ' ')
     .split(/[+-/*() ]/g)
     .filter((v) => v !== '' && Number.isNaN(Number(v)));
