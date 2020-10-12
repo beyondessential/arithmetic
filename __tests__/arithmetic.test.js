@@ -124,7 +124,7 @@ describe('Arithmetic', () => {
 
     it('should handle a yet more complex expression', () => {
       const result = runArithmetic(
-        'max(1 + (-max(15, 3 - 2, -100) / 2 + 1 - max(2, 3/2)) /2, -10)',
+        'max(1 + (-max(15, 3 - 2, -100) / 2 + 1 - max(3/2, 2)) /2, -10)',
       );
       expect(result).toEqual(
         Math.max(1 + (-Math.max(15, 3 - 2, -100) / 2 + 1 - Math.max(2, 3 / 2)) / 2, -10),
@@ -168,7 +168,7 @@ describe('Arithmetic', () => {
     });
 
     it('should be able to substitute values into a function with the same name', () => {
-      const result = runArithmetic('maX(max, eyes)', VALUES);
+      const result = runArithmetic('max(max, eyes)', VALUES);
       expect(result).toEqual(Math.max(100, 10));
     });
   });

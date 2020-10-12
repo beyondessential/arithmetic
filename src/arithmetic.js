@@ -48,7 +48,7 @@ function shouldPopOperator(token, topOfStack) {
   return true;
 }
 
-const tokenizer = /([+\-*/()uxm,])/g;
+const tokenizer = /(\+|-|\*|\/|\(|\)|u|max|x|,)/g;
 
 function shuntingYard(text) {
   const stack = [];
@@ -69,7 +69,7 @@ function shuntingYard(text) {
       continue;
     }
     if (token === '(') {
-      if (stack[0] && stack[0] === 'm') {
+      if (stack[0] && stack[0] === 'max') {
         queue.push(token);
       }
       stack.unshift(token);
@@ -79,16 +79,6 @@ function shuntingYard(text) {
       while (shouldPopOperator(token, stack[0])) {
         queue.push(stack.shift());
       }
-      //TODO:
-      //stack.unshift(token);
-      // while (stack.length > 0 && stack[0] !== '(') {
-      //   queue.push(stack.shift());
-      // }
-      // if (stack[0] === '(') {
-      //   //stack.shift();
-      // } else {
-      //   throw new Error('Unmatched parenthesis');
-      // }
       continue;
     }
     if (token === ')') {
@@ -97,7 +87,7 @@ function shuntingYard(text) {
       }
       if (stack[0] === '(') {
         stack.shift();
-        if (stack[0] === 'm') {
+        if (stack[0] === 'max') {
           queue.push(stack.shift());
         }
       } else {
@@ -112,7 +102,7 @@ function shuntingYard(text) {
       continue;
     }
 
-    throw new Error('Unrecognised token');
+    throw new Error(`Unrecognised token: ${token}`);
   }
 
   while (stack.length > 0) {
@@ -134,7 +124,7 @@ function processQueue(queue) {
 
     // alias just in case
     x: () => operations['*'](),
-    m: () => {
+    max: () => {
       let val = stack.pop();
       let max = -Infinity;
       while (val !== '(') {
@@ -177,6 +167,7 @@ export function runArithmetic(formulaText, values = {}) {
       throw new Error('Invalid value substitution');
     }
 
+    //TODO:
     valuedText = valuedText.replace(new RegExp(key, 'g'), value);
   });
 
@@ -185,10 +176,8 @@ export function runArithmetic(formulaText, values = {}) {
 
   // then replace the unary minus with a 'u' so we can
   // handle it differently to subtraction in the tokeniser
-  const replacedText = replaceUnaryMinus(strippedText)
-    .replace('max', 'm')
-    .replace('max', 'm')
-    .replace('max', 'm');
+  const replacedText = replaceUnaryMinus(strippedText);
+
   console.log(strippedText, replacedText);
 
   // then create a postfix queue using the shunting yard algorithm

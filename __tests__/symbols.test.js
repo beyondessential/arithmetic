@@ -19,8 +19,8 @@ describe('getVariables()', () => {
     ['same variable multiple times', 'a * b + a', ['a', 'b']],
     ['all operators', '(a + -b) / ((2 * c) - 3 x d)', ['a', 'b', 'c', 'd']],
     ['formula includes functions', 'max(1, 2, a)', ['a']],
+    ['variable with function name', 'max(1, 2, a, max)', ['a', 'max']],
     // TODO: The below fail (should they?)
-    //['variable with function name', 'max(1, 2, a, max)', ['a', 'max']],
     //['TODO -fails', 'x-1', ['x']], // fix this in separate pr
     //['TODO -fails', 'x - 1', ['x']], // fix this in separate pr
   ];
