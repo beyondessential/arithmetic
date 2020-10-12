@@ -187,6 +187,18 @@ describe('Arithmetic', () => {
       expect(() => runArithmetic('4 * 1 + 2)')).toThrow();
     });
 
+    it('should fail on incorrect function call', () => {
+      expect(() => runArithmetic('max(')).toThrow();
+      expect(() => runArithmetic('max())')).toThrow();
+      expect(() => runArithmetic('max(()')).toThrow();
+      expect(() => runArithmetic('max((1, 2), 3)')).toThrow();
+      expect(() => runArithmetic('max(3, (1, 2))')).toThrow();
+      expect(() => runArithmetic('max(, 3)')).toThrow();
+      expect(() => runArithmetic('max(3, )')).toThrow();
+      expect(() => runArithmetic('max(3,,2)')).toThrow();
+      expect(() => runArithmetic('max(3-,2)')).toThrow();
+    });
+
     it('should fail if a substitution is not numeric', () => {
       expect(() => runArithmetic('check + 1', { check: 'check' })).toThrow();
       expect(() => runArithmetic('check + 1', { check: '+' })).toThrow();

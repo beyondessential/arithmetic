@@ -75,6 +75,7 @@ function shuntingYard(text) {
       while (shouldPopOperator(token, stack[0])) {
         queue.push(stack.shift());
       }
+      if (stack[0] !== '(' || !FUNCTION_NAMES.includes(stack[1])) throw new Error('Incorrect function call');
       continue;
     }
     if (token === ')') {
@@ -173,6 +174,7 @@ export function runArithmetic(formulaText, values = {}) {
   // strip out all whitespace
   const strippedText = valuedText.replace(noWhitespace, '');
 
+  if (strippedText.match(/([(,],)|(,\))/g)) throw new Error('Leading or trailing comma detected');
   // make sure that functions are case insensitive
   const lowercaseText = strippedText.toLowerCase();
 
