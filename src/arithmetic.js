@@ -43,7 +43,6 @@ function shouldPopOperator(token, topOfStack) {
   if (topOfStack === '(') return false;
   const topPrecedence = getPrecedence(topOfStack);
   const tokenPrecedence = getPrecedence(token);
-  console.log(token, topOfStack, tokenPrecedence, topPrecedence);
   if (topPrecedence < tokenPrecedence) return false;
   return true;
 }
@@ -59,7 +58,6 @@ function shuntingYard(text) {
   while (tokens.length > 0) {
     const token = tokens.shift();
     if (!token) continue;
-    console.log(token, stack, queue);
 
     if (isOperator(token)) {
       while (shouldPopOperator(token, stack[0])) {
@@ -108,7 +106,6 @@ function shuntingYard(text) {
   while (stack.length > 0) {
     queue.push(stack.shift());
   }
-  console.log(queue);
 
   return queue;
 }
@@ -134,14 +131,12 @@ function processQueue(queue) {
         if (stack.length === 0) throw new Error('oop');
         val = stack.pop();
       }
-      console.log(val);
       return max;
     },
   };
 
   while (queue.length > 0) {
     const item = queue.shift();
-    console.log(queue, stack, item);
     if (typeof item === 'number' || item === '(') {
       stack.push(item);
       continue;
@@ -152,7 +147,6 @@ function processQueue(queue) {
     }
     throw new Error('Unexpected token', item);
   }
-  console.log(stack[0]);
   if (stack.length > 1 || typeof stack[0] !== 'number') throw new Error('Unmatched parenthesis');
 
   return stack[0];
@@ -188,8 +182,6 @@ export function runArithmetic(formulaText, values = {}) {
   // then replace the unary minus with a 'u' so we can
   // handle it differently to subtraction in the tokeniser
   const replacedText = replaceUnaryMinus(lowercaseText);
-
-  console.log(strippedText, replacedText);
 
   // then create a postfix queue using the shunting yard algorithm
   const queue = shuntingYard(replacedText);
