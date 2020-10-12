@@ -176,16 +176,18 @@ export function runArithmetic(formulaText, values = {}) {
       throw new Error('Invalid value substitution');
     }
 
-    //TODO:
     valuedText = valuedText.replace(buildVariableReplacer(key), value);
   });
 
   // strip out all whitespace
   const strippedText = valuedText.replace(noWhitespace, '');
 
+  // convert all characters to lowercase
+  const lowercaseText = strippedText.toLowerCase();
+
   // then replace the unary minus with a 'u' so we can
   // handle it differently to subtraction in the tokeniser
-  const replacedText = replaceUnaryMinus(strippedText);
+  const replacedText = replaceUnaryMinus(lowercaseText);
 
   console.log(strippedText, replacedText);
 

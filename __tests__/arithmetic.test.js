@@ -131,10 +131,10 @@ describe('Arithmetic', () => {
       );
     });
 
-    // it('should be caps insensitive', () => {
-    //   const result = runArithmetic('maX(15)');
-    //   expect(result).toEqual(15);
-    // });
+    it('should be caps insensitive', () => {
+      const result = runArithmetic('maX(15)');
+      expect(result).toEqual(15);
+    });
   });
 
   describe('substituting values', () => {
