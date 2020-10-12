@@ -160,6 +160,11 @@ function processQueue(queue) {
 
 const noWhitespace = /\s/g;
 
+// Variables are not replaced if the next non-whitespace character is a '('
+// e.g. max(5 + max)
+// the first max would not be replaced as it is a function
+const buildVariableReplacer = (key) => new RegExp(`${key}(?!\\s*\\()`, 'g');
+
 export function runArithmetic(formulaText, values = {}) {
   // first replace variables with their actual values
   // (we do this here rather than treating the variable names as tokens,
@@ -172,7 +177,7 @@ export function runArithmetic(formulaText, values = {}) {
     }
 
     //TODO:
-    valuedText = valuedText.replace(new RegExp(key, 'g'), value);
+    valuedText = valuedText.replace(buildVariableReplacer(key), value);
   });
 
   // strip out all whitespace
