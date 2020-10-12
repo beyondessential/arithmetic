@@ -35,7 +35,7 @@ export function getVariables(formulaText) {
   const variables = formulaText
     // Replace the alternate multiplication symbol 'x' with a non-alphanumeric character
     .replace(/(^|\W)x(\W|$)/, ' ')
-    // Replace functions
+    // Replace functions with a non-alphanumeric character
     .replace(/max\s*\(/, ' ')
     .split(/[+-/*() ]/g)
     .filter((v) => v !== '' && Number.isNaN(Number(v)));

@@ -54,12 +54,10 @@ function shuntingYard(text) {
   const queue = [];
 
   const tokens = text.split(tokenizer);
-  console.log(tokens);
 
   while (tokens.length > 0) {
     const token = tokens.shift();
     if (!token) continue;
-    console.log(token, stack, queue);
 
     if (isOperator(token)) {
       while (shouldPopOperator(token, stack[0])) {
@@ -155,7 +153,7 @@ const noWhitespace = /\s/g;
 
 // Variables are not replaced if the next non-whitespace character is a '('
 // e.g. max(5 + max)
-// the first max would not be replaced as it is a function
+// the first max would not be replaced as it is a function not a variable
 const buildVariableReplacer = (key) => new RegExp(`${key}(?!\\s*\\()`, 'g');
 
 export function runArithmetic(formulaText, values = {}) {
@@ -175,7 +173,7 @@ export function runArithmetic(formulaText, values = {}) {
   // strip out all whitespace
   const strippedText = valuedText.replace(noWhitespace, '');
 
-  // convert all characters to lowercase
+  // make sure that functions are case insensitive
   const lowercaseText = strippedText.toLowerCase();
 
   // then replace the unary minus with a 'u' so we can
