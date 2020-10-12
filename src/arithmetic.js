@@ -24,7 +24,7 @@
 
 import { isOperator, getPrecedence } from './symbols';
 
-const unaryRegex = /(^|[*x/+\-u])-/g;
+const unaryRegex = /(^|[*()x/+\-u,])-/g;
 function replaceUnaryMinus(text) {
   const replaced = text.replace(unaryRegex, (match, p1) => `${p1}u`);
   if (replaced !== text) {
@@ -43,11 +43,12 @@ function shouldPopOperator(token, topOfStack) {
   if (topOfStack === '(') return false;
   const topPrecedence = getPrecedence(topOfStack);
   const tokenPrecedence = getPrecedence(token);
+  console.log(token, topOfStack, tokenPrecedence, topPrecedence);
   if (topPrecedence < tokenPrecedence) return false;
   return true;
 }
 
-const tokenizer = /([+\-*/()ux])/g;
+const tokenizer = /([+\-*/()uxm,])/g;
 
 function shuntingYard(text) {
   const stack = [];
@@ -58,6 +59,7 @@ function shuntingYard(text) {
   while (tokens.length > 0) {
     const token = tokens.shift();
     if (!token) continue;
+    console.log(token, stack, queue);
 
     if (isOperator(token)) {
       while (shouldPopOperator(token, stack[0])) {
@@ -67,7 +69,26 @@ function shuntingYard(text) {
       continue;
     }
     if (token === '(') {
+      if (stack[0] && stack[0] === 'm') {
+        queue.push(token);
+      }
       stack.unshift(token);
+      continue;
+    }
+    if (token === ',') {
+      while (shouldPopOperator(token, stack[0])) {
+        queue.push(stack.shift());
+      }
+      //TODO:
+      //stack.unshift(token);
+      // while (stack.length > 0 && stack[0] !== '(') {
+      //   queue.push(stack.shift());
+      // }
+      // if (stack[0] === '(') {
+      //   //stack.shift();
+      // } else {
+      //   throw new Error('Unmatched parenthesis');
+      // }
       continue;
     }
     if (token === ')') {
@@ -76,6 +97,9 @@ function shuntingYard(text) {
       }
       if (stack[0] === '(') {
         stack.shift();
+        if (stack[0] === 'm') {
+          queue.push(stack.shift());
+        }
       } else {
         throw new Error('Unmatched parenthesis');
       }
@@ -94,6 +118,7 @@ function shuntingYard(text) {
   while (stack.length > 0) {
     queue.push(stack.shift());
   }
+  console.log(queue);
 
   return queue;
 }
@@ -109,11 +134,23 @@ function processQueue(queue) {
 
     // alias just in case
     x: () => operations['*'](),
+    m: () => {
+      let val = stack.pop();
+      let max = -Infinity;
+      while (val !== '(') {
+        max = Math.max(max, val);
+        if (stack.length === 0) throw new Error('oop');
+        val = stack.pop();
+      }
+      console.log(val);
+      return max;
+    },
   };
 
   while (queue.length > 0) {
     const item = queue.shift();
-    if (typeof item === 'number') {
+    console.log(queue, stack, item);
+    if (typeof item === 'number' || item === '(') {
       stack.push(item);
       continue;
     }
@@ -135,7 +172,7 @@ export function runArithmetic(formulaText, values = {}) {
   // so that the tokeniser doesn't get confused by variable names with
   // u and x in them)
   let valuedText = formulaText;
-  Object.entries(values).map(([key, value]) => {
+  Object.entries(values).forEach(([key, value]) => {
     if (Number.isNaN(parseFloat(value))) {
       throw new Error('Invalid value substitution');
     }
@@ -148,7 +185,11 @@ export function runArithmetic(formulaText, values = {}) {
 
   // then replace the unary minus with a 'u' so we can
   // handle it differently to subtraction in the tokeniser
-  const replacedText = replaceUnaryMinus(strippedText);
+  const replacedText = replaceUnaryMinus(strippedText)
+    .replace('max', 'm')
+    .replace('max', 'm')
+    .replace('max', 'm');
+  console.log(strippedText, replacedText);
 
   // then create a postfix queue using the shunting yard algorithm
   const queue = shuntingYard(replacedText);

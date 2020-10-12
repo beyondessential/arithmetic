@@ -6,11 +6,13 @@
  */
 
 export function isOperator(token) {
-  return ['+', '-', '/', '*', 'x', 'u'].includes(token);
+  return ['+', '-', '/', '*', 'x', 'u', 'm'].includes(token);
 }
 
 export function getPrecedence(operator) {
   switch (operator) {
+    case 'm':
+      return 5;
     case 'u':
       return 4;
     case '*':
@@ -20,6 +22,8 @@ export function getPrecedence(operator) {
     case '+':
     case '-':
       return 2;
+    case ',':
+      return 1;
     default:
       throw new Error('Invalid operator');
   }
@@ -29,8 +33,9 @@ export function getVariables(formulaText) {
   const variables = formulaText
     // Replace the alternate multiplication symbol 'x' with a non-alphanumeric character
     .replace(/(^|\W)x(\W|$)/, ' ')
+    .replace(/(^|\W)max(\W|$)/, ' ')
     .split(/[+-/*() ]/g)
-    .filter(v => v !== '' && Number.isNaN(Number(v)));
+    .filter((v) => v !== '' && Number.isNaN(Number(v)));
 
   return [...new Set(variables)];
 }

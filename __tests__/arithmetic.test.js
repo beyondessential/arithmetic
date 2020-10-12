@@ -96,6 +96,47 @@ describe('Arithmetic', () => {
     });
   });
 
+  describe.only('max function', () => {
+    it('should handle max of one number', () => {
+      const result = runArithmetic('max(15)');
+      expect(result).toEqual(15);
+    });
+
+    it('should handle max of two numbers', () => {
+      const result = runArithmetic('max(15, 20)');
+      expect(result).toEqual(20);
+    });
+
+    it('should handle max of more than two numbers', () => {
+      const result = runArithmetic('max(15, 12, 15.01, -100)');
+      expect(result).toEqual(15.01);
+    });
+
+    it('should handle a more complex expression', () => {
+      const result = runArithmetic('max(3 - 2, -100) / 2');
+      expect(result).toEqual(0.5);
+    });
+
+    it('should handle an even more complex expression', () => {
+      const result = runArithmetic('max(15, 3 - 2, -100) / 2 + 1 - max(2, 3/2)');
+      expect(result).toEqual(Math.max(15, 3 - 2, -100) / 2 + 1 - Math.max(2, 3 / 2));
+    });
+
+    it('should handle a yet more complex expression', () => {
+      const result = runArithmetic(
+        'max(1 + (-max(15, 3 - 2, -100) / 2 + 1 - max(2, 3/2)) /2, -10)',
+      );
+      expect(result).toEqual(
+        Math.max(1 + (-Math.max(15, 3 - 2, -100) / 2 + 1 - Math.max(2, 3 / 2)) / 2, -10),
+      );
+    });
+
+    // it('should be caps insensitive', () => {
+    //   const result = runArithmetic('maX(15)');
+    //   expect(result).toEqual(15);
+    // });
+  });
+
   describe('substituting values', () => {
     const VALUES = {
       fingers: 10,
@@ -103,6 +144,7 @@ describe('Arithmetic', () => {
       pi: 3.14159,
       sins: 7,
       negative: -5,
+      max: 100,
     };
 
     it('should handle simple value substitution', () => {
@@ -118,6 +160,16 @@ describe('Arithmetic', () => {
     it('should handle a more complicated case', () => {
       const result = runArithmetic('-eyes * (sins - pi * 3) / negative + (sins + 1)', VALUES);
       expect(result).toEqual((-2 * (7 - 3.14159 * 3)) / -5 + (7 + 1));
+    });
+
+    it('should handle substitution of a value which is a function name', () => {
+      const result = runArithmetic('fingers + max', VALUES);
+      expect(result).toEqual(10 + 100);
+    });
+
+    it('should be able to substitute values into a function with the same name', () => {
+      const result = runArithmetic('maX(max, eyes)', VALUES);
+      expect(result).toEqual(Math.max(100, 10));
     });
   });
 
