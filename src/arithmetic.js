@@ -22,7 +22,9 @@
 // that, don't sweat! There're unit tests and you can validate that things
 // work over there.
 
-import { isOperator, getPrecedence, FUNCTION_NAMES } from './symbols';
+import {
+  isOperator, getPrecedence, FUNCTION_NAMES, isFunctionToken,
+} from './symbols';
 
 const unaryRegex = /(^|[*(x/+\-u,])-/g;
 function replaceUnaryMinus(text) {
@@ -64,7 +66,7 @@ function shuntingYard(text) {
         queue.push(stack.shift());
       }
       stack.unshift(token);
-      if (FUNCTION_NAMES.includes(token)) queue.push('END_ARGS');
+      if (isFunctionToken(token)) queue.push('END_ARGS');
       continue;
     }
     if (token === '(') {
@@ -75,7 +77,10 @@ function shuntingYard(text) {
       while (shouldPopOperator(token, stack[0])) {
         queue.push(stack.shift());
       }
-      if (stack[0] !== '(' || !FUNCTION_NAMES.includes(stack[1])) throw new Error('Incorrect function call');
+      if (!(stack[0] === '(' && isFunctionToken(stack[1]))) {
+        // A comma is ONLY valid when the next thing in the stack is the function call
+        throw new Error('Incorrect function call');
+      }
       continue;
     }
     if (token === ')') {
@@ -84,7 +89,7 @@ function shuntingYard(text) {
       }
       if (stack[0] === '(') {
         stack.shift();
-        if (FUNCTION_NAMES.includes(stack[0])) {
+        if (isFunctionToken(stack[0])) {
           queue.push(stack.shift());
         }
       } else {

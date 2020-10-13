@@ -7,12 +7,14 @@
 
 export const FUNCTION_NAMES = ['max'];
 
+export const isFunctionToken = (token) => FUNCTION_NAMES.includes(token);
+
 export function isOperator(token) {
-  return ['+', '-', '/', '*', 'x', 'u'].includes(token) || FUNCTION_NAMES.includes(token);
+  return ['+', '-', '/', '*', 'x', 'u'].includes(token) || isFunctionToken(token);
 }
 
 export function getPrecedence(operator) {
-  if (FUNCTION_NAMES.includes(operator)) return 5;
+  if (isFunctionToken(operator)) return 5;
 
   switch (operator) {
     case 'u':
