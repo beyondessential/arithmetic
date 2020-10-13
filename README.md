@@ -56,5 +56,5 @@ Operator | Example | Description
 `*` or `x` | `1 * 1` or `1 x 1` | Multiplication
 `/` | `1 / 1` | Division
 `()`| `1 / (1 + 1)` | Brackets
-`u` or `-` | `u1` or `-1` | Unary minus
+`-` | `-1` | Unary minus
 `max` | `max(1, 2, 3)` | Takes the maximum value of it's arguments. `-Infinity` if given none
