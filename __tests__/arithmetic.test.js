@@ -4,7 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
 import { runArithmetic } from '../src/arithmetic';
 
 describe('Arithmetic', () => {
@@ -65,7 +64,7 @@ describe('Arithmetic', () => {
   });
 
   describe('unary minus (for eg, -1)', () => {
-    it('should handle multiplying by a negative', () => {
+    it('should handle dividing by a negative', () => {
       const result = runArithmetic('4 / - 2');
       expect(result).toEqual(4 / -2);
     });
@@ -75,7 +74,7 @@ describe('Arithmetic', () => {
       expect(result).toEqual(4 * -2 * -2);
     });
 
-    it('should handle multiplying by a double negative', () => {
+    it('should handle dividing by a double negative', () => {
       const result = runArithmetic('4 / - - 2');
       expect(result).toEqual(4 / 2);
     });
@@ -94,9 +93,15 @@ describe('Arithmetic', () => {
       const result = runArithmetic('1+1 - - 5');
       expect(result).toEqual(1 + 1 - -5);
     });
+
+    it('should handle negating a function call', () => {
+      const result = runArithmetic('1 - -max(1, 2)');
+      expect(result).toEqual(1 - -Math.max(1, 2));
+    });
   });
 
   describe('max function', () => {
+    const { max } = Math;
     it('should handle max with no arguments', () => {
       const result = runArithmetic('max()');
       expect(result).toEqual(-Infinity);
@@ -104,41 +109,27 @@ describe('Arithmetic', () => {
 
     it('should handle max of one number', () => {
       const result = runArithmetic('max(15)');
-      expect(result).toEqual(15);
+      expect(result).toEqual(max(15));
     });
 
     it('should handle max of two numbers', () => {
       const result = runArithmetic('max(15, 20)');
-      expect(result).toEqual(20);
-    });
-
-    it('should handle max of more than two numbers', () => {
-      const result = runArithmetic('max(15, 12, 15.01, -100)');
-      expect(result).toEqual(15.01);
+      expect(result).toEqual(max(15, 20));
     });
 
     it('should handle a more complex expression', () => {
-      const result = runArithmetic('max(3 - 2, -100) / 2');
-      expect(result).toEqual(0.5);
-    });
-
-    it('should handle an even more complex expression', () => {
-      const result = runArithmetic('max(15, 3 - 2, -100) / 2 + 1 - max(2, 3/2)');
-      expect(result).toEqual(Math.max(15, 3 - 2, -100) / 2 + 1 - Math.max(2, 3 / 2));
+      const result = runArithmetic('max(1, 3 - 2, -100) / 2');
+      expect(result).toEqual(max(1, 3 - 2, -100) / 2);
     });
 
     it('should handle a yet more complex expression', () => {
-      const result = runArithmetic(
-        'max(1 + (-max(15, 3 - 2, -100) / 2 + 1 - max(3/2, 2)) /2, -10)',
-      );
-      expect(result).toEqual(
-        Math.max(1 + (-Math.max(15, 3 - 2, -100) / 2 + 1 - Math.max(2, 3 / 2)) / 2, -10),
-      );
+      const result = runArithmetic('max(max(), (-max(15, 3 -2, -100) / 2 + 1 - max(3/2)) /2, -10)');
+      expect(result).toEqual(max(-Infinity, (-max(15, 3 - 2, -100) / 2 + 1 - max(3 / 2)) / 2, -10));
     });
 
     it('should be caps insensitive', () => {
       const result = runArithmetic('maX(15)');
-      expect(result).toEqual(15);
+      expect(result).toEqual(max(15));
     });
   });
 
@@ -149,6 +140,8 @@ describe('Arithmetic', () => {
       pi: 3.14159,
       sins: 7,
       negative: -5,
+      theLetter_A: 65,
+      theLetter_a: 97,
       max: 100,
     };
 
@@ -160,6 +153,11 @@ describe('Arithmetic', () => {
     it('should handle negative value substitution', () => {
       const result = runArithmetic('fingers + negative', VALUES);
       expect(result).toEqual(10 - 5);
+    });
+
+    it('should handle substituting based on capitalization', () => {
+      const result = runArithmetic('theLetter_A - theLetter_a', VALUES);
+      expect(result).toEqual(65 - 97);
     });
 
     it('should handle a more complicated case', () => {
@@ -202,6 +200,13 @@ describe('Arithmetic', () => {
       expect(() => runArithmetic('max(3, )')).toThrow();
       expect(() => runArithmetic('max(3,,2)')).toThrow();
       expect(() => runArithmetic('max(3-,2)')).toThrow();
+    });
+
+    it('should fail on incorrect comma usage', () => {
+      expect(() => runArithmetic('1 + , 1')).toThrow();
+      expect(() => runArithmetic('1 , 1')).toThrow();
+      expect(() => runArithmetic('1 + (1, 1)')).toThrow();
+      expect(() => runArithmetic(',')).toThrow();
     });
 
     it('should fail if a substitution is not numeric', () => {
