@@ -26,8 +26,6 @@ export function getPrecedence(operator) {
     case '+':
     case '-':
       return 2;
-    case ',':
-      return 1;
     default:
       throw new Error('Invalid operator');
   }

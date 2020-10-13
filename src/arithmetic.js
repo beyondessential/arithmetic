@@ -74,7 +74,7 @@ function shuntingYard(text) {
       continue;
     }
     if (token === ',') {
-      while (shouldPopOperator(token, stack[0])) {
+      while (stack.length && stack[0] !== '(') {
         queue.push(stack.shift());
       }
       if (!(stack[0] === '(' && isFunctionToken(stack[1]))) {
