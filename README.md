@@ -46,3 +46,15 @@ import { getVariables } from '@beyondessential/arithmetic';
 const variables = getVariables('(-a * b - 1) / (c + 3)');
 console.log(variables); // ['a', 'b', 'c']
 ```
+
+## formulaText operators
+Note: All operators are case **in**sensitive.
+Operator | Example | Description
+-|-|-
+ `+` | `1 + 1` | Addition
+ `-` | `1 - 1` | Subtraction
+`*` or `x` | `1 * 1` or `1 x 1` | Multiplication
+`/` | `1 / 1` | Division
+`()`| `1 / (1 + 1)` | Brackets
+`-` | `-1` | Unary minus
+`max` | `max(1, 2, 3)` | Takes the maximum value of it's arguments. `-Infinity` if given none
