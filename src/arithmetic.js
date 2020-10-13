@@ -26,7 +26,7 @@ import {
   isOperator, getPrecedence, FUNCTION_NAMES, isFunctionToken,
 } from './symbols';
 
-const unaryRegex = /(^|[*(x/+\-u,])-/g;
+const unaryRegex = /(^|[*x/+\-u,(])-/g;
 function replaceUnaryMinus(text) {
   const replaced = text.replace(unaryRegex, (match, p1) => `${p1}u`);
   if (replaced !== text) {
@@ -49,7 +49,7 @@ function shouldPopOperator(token, topOfStack) {
   return true;
 }
 
-const tokenizer = new RegExp(`(${FUNCTION_NAMES.join('|')}|\\+|-|\\*|\\/|\\(|\\)|u|x|,)`, 'g');
+const tokenizer = new RegExp(`(${FUNCTION_NAMES.join('|')}|[+\\-*/()ux,])`, 'g');
 
 function shuntingYard(text) {
   const stack = [];
@@ -132,7 +132,7 @@ function processQueue(queue) {
       let max = -Infinity;
       while (val !== 'END_ARGS') {
         max = Math.max(max, val);
-        if (stack.length === 0) throw new Error('No END_ARGS for function');
+        if (stack.length === 0) throw new Error('No END_ARGS for function "max"');
         val = stack.pop();
       }
       return max;
@@ -157,9 +157,9 @@ function processQueue(queue) {
 
 const noWhitespace = /\s/g;
 
-// Variables are not replaced if the next non-whitespace character is a '('
+// Names with a '(' after them are function calls, not variables
 // e.g. max(5 + max)
-// the first max would not be replaced as it is a function not a variable
+// the first max would not be replaced
 const buildVariableReplacer = (key) => new RegExp(`${key}(?!\\s*\\()`, 'g');
 
 export function runArithmetic(formulaText, values = {}) {
@@ -180,7 +180,8 @@ export function runArithmetic(formulaText, values = {}) {
   const strippedText = valuedText.replace(noWhitespace, '');
 
   if (strippedText.match(/([(,],)|(,\))/g)) throw new Error('Leading or trailing comma detected');
-  // make sure that functions are case insensitive
+
+  // functions are case insensitive
   const lowercaseText = strippedText.toLowerCase();
 
   // then replace the unary minus with a 'u' so we can
