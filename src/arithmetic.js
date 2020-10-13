@@ -22,9 +22,11 @@
 // that, don't sweat! There're unit tests and you can validate that things
 // work over there.
 
-import { isOperator, getPrecedence } from './symbols';
+import {
+  isOperator, getPrecedence, FUNCTION_NAMES, isFunctionToken,
+} from './symbols';
 
-const unaryRegex = /(^|[*x/+\-u])-/g;
+const unaryRegex = /(^|[*x/+\-u,(])-/g;
 function replaceUnaryMinus(text) {
   const replaced = text.replace(unaryRegex, (match, p1) => `${p1}u`);
   if (replaced !== text) {
@@ -47,7 +49,7 @@ function shouldPopOperator(token, topOfStack) {
   return true;
 }
 
-const tokenizer = /([+\-*/()ux])/g;
+const tokenizer = new RegExp(`(${FUNCTION_NAMES.join('|')}|[+\\-*/()ux,])`, 'g');
 
 function shuntingYard(text) {
   const stack = [];
@@ -64,10 +66,21 @@ function shuntingYard(text) {
         queue.push(stack.shift());
       }
       stack.unshift(token);
+      if (isFunctionToken(token)) queue.push('END_ARGS');
       continue;
     }
     if (token === '(') {
       stack.unshift(token);
+      continue;
+    }
+    if (token === ',') {
+      while (stack.length && stack[0] !== '(') {
+        queue.push(stack.shift());
+      }
+      if (!(stack[0] === '(' && isFunctionToken(stack[1]))) {
+        // A comma is ONLY valid when the next thing in the stack is the function call
+        throw new Error('Incorrect function call');
+      }
       continue;
     }
     if (token === ')') {
@@ -76,6 +89,9 @@ function shuntingYard(text) {
       }
       if (stack[0] === '(') {
         stack.shift();
+        if (isFunctionToken(stack[0])) {
+          queue.push(stack.shift());
+        }
       } else {
         throw new Error('Unmatched parenthesis');
       }
@@ -88,7 +104,7 @@ function shuntingYard(text) {
       continue;
     }
 
-    throw new Error('Unrecognised token');
+    throw new Error(`Unrecognised token: ${token}`);
   }
 
   while (stack.length > 0) {
@@ -109,11 +125,23 @@ function processQueue(queue) {
 
     // alias just in case
     x: () => operations['*'](),
+
+    // functions
+    max: () => {
+      let val = stack.pop();
+      let max = -Infinity;
+      while (val !== 'END_ARGS') {
+        max = Math.max(max, val);
+        if (stack.length === 0) throw new Error('No END_ARGS for function "max"');
+        val = stack.pop();
+      }
+      return max;
+    },
   };
 
   while (queue.length > 0) {
     const item = queue.shift();
-    if (typeof item === 'number') {
+    if (typeof item === 'number' || item === 'END_ARGS') {
       stack.push(item);
       continue;
     }
@@ -129,26 +157,36 @@ function processQueue(queue) {
 
 const noWhitespace = /\s/g;
 
+// Names with a '(' after them are function calls, not variables
+// e.g. max(5 + max)
+// the first max would not be replaced
+const buildVariableReplacer = (key) => new RegExp(`${key}(?!\\s*\\()`, 'g');
+
 export function runArithmetic(formulaText, values = {}) {
   // first replace variables with their actual values
   // (we do this here rather than treating the variable names as tokens,
   // so that the tokeniser doesn't get confused by variable names with
   // u and x in them)
   let valuedText = formulaText;
-  Object.entries(values).map(([key, value]) => {
+  Object.entries(values).forEach(([key, value]) => {
     if (Number.isNaN(parseFloat(value))) {
       throw new Error('Invalid value substitution');
     }
 
-    valuedText = valuedText.replace(new RegExp(key, 'g'), value);
+    valuedText = valuedText.replace(buildVariableReplacer(key), value);
   });
 
   // strip out all whitespace
   const strippedText = valuedText.replace(noWhitespace, '');
 
+  if (strippedText.match(/([(,],)|(,\))/g)) throw new Error('Leading or trailing comma detected');
+
+  // functions are case insensitive
+  const lowercaseText = strippedText.toLowerCase();
+
   // then replace the unary minus with a 'u' so we can
   // handle it differently to subtraction in the tokeniser
-  const replacedText = replaceUnaryMinus(strippedText);
+  const replacedText = replaceUnaryMinus(lowercaseText);
 
   // then create a postfix queue using the shunting yard algorithm
   const queue = shuntingYard(replacedText);

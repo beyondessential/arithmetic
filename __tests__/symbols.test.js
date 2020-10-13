@@ -18,6 +18,8 @@ describe('getVariables()', () => {
     ['no whitespace', 'a+b', ['a', 'b']],
     ['same variable multiple times', 'a * b + a', ['a', 'b']],
     ['all operators', '(a + -b) / ((2 * c) - 3 x d)', ['a', 'b', 'c', 'd']],
+    ['formula includes functions', 'max(1, 2, a)', ['a']],
+    ['variable with function name', 'max(1, 2, a, max)', ['a', 'max']],
   ];
 
   it.each(testData)('%s', (_, formula, expected) => {
