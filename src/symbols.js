@@ -7,7 +7,7 @@
 
 export const FUNCTION_NAMES = ['max'];
 
-export const isFunctionToken = (token) => FUNCTION_NAMES.includes(token);
+export const isFunctionToken = token => FUNCTION_NAMES.includes(token);
 
 export function isOperator(token) {
   return ['+', '-', '/', '*', 'x', 'u'].includes(token) || isFunctionToken(token);
@@ -38,7 +38,7 @@ export function getVariables(formulaText) {
     // Replace functions with a non-alphanumeric character
     .replace(new RegExp(`${FUNCTION_NAMES.join('|')}\\s*\\(`, 'g'), ' ')
     .split(/[+-/*() ]/g)
-    .filter((v) => v !== '' && Number.isNaN(Number(v)));
+    .filter(v => v !== '' && Number.isNaN(Number(v)));
 
   return [...new Set(variables)];
 }

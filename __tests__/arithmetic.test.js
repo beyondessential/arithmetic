@@ -103,6 +103,7 @@ describe('Arithmetic', () => {
 
   describe('max function', () => {
     const { max } = Math;
+
     it('should handle max with no arguments', () => {
       const result = runArithmetic('max()');
       expect(result).toEqual(-Infinity);
