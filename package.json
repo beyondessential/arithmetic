@@ -23,11 +23,11 @@
   "scripts": {
     "build": "babel src --out-dir dist --ignore 'src/__tests__/**'",
     "postinstall": "yarn build",
+    "lint": "eslint --ignore-path .gitignore .",
+    "lint:fix": "yarn lint --fix",
     "test": "NODE_ENV=test jest",
     "test:coverage": "yarn test --coverage",
-    "test:watch": "yarn test --watch",
-    "lint": "eslint --ignore-path .gitignore .",
-    "lint:fix": "yarn lint --fix"
+    "test:watch": "yarn test --watch"
   },
   "babel": {
     "presets": [
