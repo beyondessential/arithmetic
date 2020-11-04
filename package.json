@@ -25,7 +25,9 @@
     "postinstall": "yarn build",
     "test": "NODE_ENV=test jest",
     "test:coverage": "yarn test --coverage",
-    "test:watch": "yarn test --watch"
+    "test:watch": "yarn test --watch",
+    "lint": "eslint --ignore-path .gitignore .",
+    "lint:fix": "yarn lint --fix"
   },
   "babel": {
     "presets": [
@@ -35,21 +37,17 @@
     ]
   },
   "eslintConfig": {
-    "extends": "@beyondessential/eslint-config-beyondessential",
-    "overrides": [
-      {
-        "files": "**/__tests__/**",
-        "env": {
-          "jest": true
-        }
-      }
+    "extends": [
+      "@beyondessential/js",
+      "@beyondessential/jest"
     ]
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",
     "@babel/core": "^7.11.1",
     "@babel/preset-env": "^7.11.0",
-    "@beyondessential/eslint-config-beyondessential": "^2.5.0",
+    "@beyondessential/eslint-config-jest": "^1.0.1",
+    "@beyondessential/eslint-config-js": "^1.0.1",
     "babel-jest": "^26.3.0",
     "eslint": "^7.7.0",
     "jest": "^26.4.0",
