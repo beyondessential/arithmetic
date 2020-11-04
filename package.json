@@ -1,6 +1,6 @@
 {
   "name": "@beyondessential/arithmetic",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Utility to evaluate BODMAS arithmetic formulas",
   "keywords": [
     "arithmetic",
