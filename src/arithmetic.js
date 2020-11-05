@@ -22,9 +22,7 @@
 // that, don't sweat! There're unit tests and you can validate that things
 // work over there.
 
-import {
-  isOperator, getPrecedence, FUNCTION_NAMES, isFunctionToken,
-} from './symbols';
+import { isOperator, getPrecedence, FUNCTION_NAMES, isFunctionToken } from './symbols';
 
 const unaryRegex = /(^|[*x/+\-u,(])-/g;
 function replaceUnaryMinus(text) {
@@ -160,7 +158,7 @@ const noWhitespace = /\s/g;
 // Names with a '(' after them are function calls, not variables
 // e.g. max(5 + max)
 // the first max would not be replaced
-const buildVariableReplacer = (key) => new RegExp(`${key}(?!\\s*\\()`, 'g');
+const buildVariableReplacer = key => new RegExp(`${key}(?!\\s*\\()`, 'g');
 
 export function runArithmetic(formulaText, values = {}) {
   // first replace variables with their actual values
